@@ -1,5 +1,5 @@
 /* global google */
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { withGoogleMap, GoogleMap, withScriptjs, Marker } from "react-google-maps";
 import MapDirectionsRenderer from "./MapDirectionsRenderer";
 import { compose, withProps } from 'recompose'
@@ -16,6 +16,7 @@ const Map = compose(
     withGoogleMap)(props => {
     const [directions, setDirections] = useState(null);
     const [state, setState] = useState({ markers: [] });
+    const [error, setError] = useState(null);
 
     const mapClicked = (event) => {
         const newMarker = {
@@ -27,35 +28,40 @@ const Map = compose(
         markers.push(newMarker);
 
         if(markers.length > 1) {
-            const waypoints = markers.map(p => ({
-                location: { lat: p.lat, lng: p.lng },
-                stopover: true
-            }));
-
-            const origin = waypoints.shift().location;
-            const destination = waypoints.pop().location;
-
-            const directionsService = new google.maps.DirectionsService();
-            directionsService.route(
-                {
-                    origin: origin,
-                    destination: destination,
-                    travelMode: google.maps.TravelMode.DRIVING,
-                    waypoints: waypoints,
-                    optimizeWaypoints: true
-                },
-                (result, status) => {
-                    //console.log({result, status});
-                    if (status === google.maps.DirectionsStatus.OK) {
-                        setDirections(result);
-                    } else {
-                    }
-                }
-            );
+            distance(markers);
         }
 
         setState({ markers: markers });
         props.onMapChange(markers);
+    }
+
+    const distance = (markerArr) => {
+        const waypoints = markerArr.map(p => ({
+            location: { lat: p.lat, lng: p.lng },
+            stopover: true
+        }));
+
+        const origin = waypoints.shift().location;
+        const destination = waypoints.pop().location;
+
+        const directionsService = new google.maps.DirectionsService();
+        directionsService.route(
+            {
+                origin: origin,
+                destination: destination,
+                travelMode: google.maps.TravelMode.DRIVING,
+                waypoints: waypoints,
+                optimizeWaypoints: true
+            },
+            (result, status) => {
+                //console.log({result, status});
+                if (status === google.maps.DirectionsStatus.OK) {
+                    setDirections(result);
+                } else {
+                    setError(result);
+                }
+            }
+        );
     }
 
     let markers = null;
@@ -65,6 +71,12 @@ const Map = compose(
     } else {
         markers = state.markers;
     }
+
+    useEffect(() => {
+        if(markers.length > 1) {
+            distance(markers);
+        }
+    }, [markers])
 
     return (
         <GoogleMap

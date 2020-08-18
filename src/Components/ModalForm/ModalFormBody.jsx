@@ -93,6 +93,7 @@ const ModalFormBody = (props) => {
                 </Col>
                 <Col>
                     {props.show && <MapContainer
+                        onlyView={false}
                         containerElement={<div style={{height: "100%"}}/>}
                         onMapChange={handleMapChange}/>}
                 </Col>
