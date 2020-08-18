@@ -19,22 +19,8 @@ const ModalFormBody = (props) => {
         validate
     );
 
-    const {
-        loadingElement,
-        containerElement,
-        mapElement,
-        defaultCenter,
-        defaultZoom
-    } = props;
-
     const dispatch = useDispatch();
     const pathDescription = useSelector(state => state.firestore.ordered.pathDescription);
-
-    useEffect(() => {
-        if(state.route.length > 1){
-            computeDistance(state.route);
-        }
-    }, [handleMapChange, state.route])
 
     function submit() {
         dispatch(addItem(state));
@@ -51,12 +37,6 @@ const ModalFormBody = (props) => {
             }
         }
     }, [pathDescription, selectItem]);
-
-    const places = [
-        {latitude: 49.436367,longitude: 32.057953},
-        {latitude: 49.442582,longitude: 32.057341},
-        {latitude: 49.443256,longitude: 32.051919}
-    ]
 
     return(
         <Form onSubmit={handleSubmit}>
@@ -112,17 +92,9 @@ const ModalFormBody = (props) => {
                     </Row>
                 </Col>
                 <Col>
-                    <MapContainer
-                        googleMapURL={
-                        'https://maps.googleapis.com/maps/api/js?key=' +
-                        'AIzaSyCSnZh4D_rLPyato0wJ79ch-vdxslft4CI' +
-                        '&libraries=geometry,drawing,places'}
-                        loadingElement={loadingElement || <div style={{height: `100%`}}/>}
-                        containerElement={containerElement || <div style={{height: "80vh"}}/>}
-                        mapElement={mapElement || <div style={{height: `100%`}}/>}
-                        defaultCenter={defaultCenter || {lat: 49.453115, lng: 32.045652}}
-                        defaultZoom={defaultZoom || 14}
-                        onMapChange={ handleMapChange }/>
+                    {props.show && <MapContainer
+                        containerElement={<div style={{height: "100%"}}/>}
+                        onMapChange={handleMapChange}/>}
                 </Col>
             </Form.Row>
         </Form>

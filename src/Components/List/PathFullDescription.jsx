@@ -4,6 +4,7 @@ import MapForm from "../Map/MapContainer";
 import { Col, Row, Button, ButtonGroup, Spinner } from "react-bootstrap";
 import { deleteItem, selectItem, markFavorite } from "../../store/actions/progectActions";
 import { useDispatch, useSelector } from "react-redux";
+import MapContainer from "../Map/MapContainer";
 
 const FullDecript = () => {
     const dispatch = useDispatch();
@@ -17,12 +18,6 @@ const FullDecript = () => {
 
     const handleIsFavorite = () => {
         dispatch(markFavorite(selectedPath.id));
-    }
-
-    const containerStyle = {
-        width: '100%',
-        height: '300px',
-        position: 'relative'
     }
 
     if (selectedPath) {
@@ -42,7 +37,11 @@ const FullDecript = () => {
                     </Col>
                 </Row>
                 <div>
-                    <MapForm containerStyle={containerStyle} route={selectedPath.route} onlyView={true}/>
+                    <MapContainer
+                        route={selectedPath.route}
+                        containerElement={<div style={{height: "300px"}}/>}
+                        onlyView={true}
+                    />
                 </div>
                 <Row className="float-right">
                     <ButtonGroup vertical>
