@@ -45,7 +45,7 @@ const Map = compose(
                     optimizeWaypoints: true
                 },
                 (result, status) => {
-                    console.log({result, status});
+                    //console.log({result, status});
                     if (status === google.maps.DirectionsStatus.OK) {
                         setDirections(result);
                     } else {
